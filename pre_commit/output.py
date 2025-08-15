@@ -35,7 +35,7 @@ def write_line(s: str | None = None, **kwargs: Any) -> None:
 
 def try_clear_line() -> bool:
     if sys.stdout.isatty():
-        sys.stdout.buffer.write(b'\r')
+        sys.stdout.buffer.write(b'\033[1K\r')
         sys.stdout.buffer.flush()
         return True
     else:
