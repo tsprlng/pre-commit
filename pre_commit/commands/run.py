@@ -166,16 +166,17 @@ def _run_single_hook(
         files_modified = False
         out = b''
     elif not filenames and not hook.always_run:
-        output.write(
-            _full_msg(
-                start=hook.name,
-                postfix=NO_FILES,
-                end_msg=SKIPPED,
-                end_color=color.TURQUOISE,
-                use_color=use_color,
-                cols=cols,
-            ),
-        )
+        if verbose:
+            output.write(
+                _full_msg(
+                    start=hook.name,
+                    postfix=NO_FILES,
+                    end_msg=SKIPPED,
+                    end_color=color.TURQUOISE,
+                    use_color=use_color,
+                    cols=cols,
+                ),
+            )
         duration = None
         retcode = 0
         diff_after = diff_before
@@ -205,14 +206,18 @@ def _run_single_hook(
         # if the hook makes changes, fail the commit
         files_modified = diff_before != diff_after
 
-        if retcode or files_modified:
+        failed = retcode or files_modified
+        if failed:
             print_color = color.RED
             status = 'Failed'
         else:
             print_color = color.GREEN
             status = 'Passed'
 
-        output.write_line(color.format_color(status, print_color, use_color))
+        if failed or verbose or not output.try_clear_line():
+            output.write_line(
+                color.format_color(status, print_color, use_color),
+            )
 
     if verbose or hook.verbose or retcode or files_modified:
         _subtle_line(f'- hook id: {hook.id}', use_color)

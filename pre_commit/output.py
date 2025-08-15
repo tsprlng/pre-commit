@@ -31,3 +31,12 @@ def write_line_b(
 
 def write_line(s: str | None = None, **kwargs: Any) -> None:
     write_line_b(s.encode() if s is not None else s, **kwargs)
+
+
+def try_clear_line() -> bool:
+    if sys.stdout.isatty():
+        sys.stdout.buffer.write(b'\r')
+        sys.stdout.buffer.flush()
+        return True
+    else:
+        return False
