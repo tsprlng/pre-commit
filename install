@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+uv tool install -e . --with pre-commit-uv
